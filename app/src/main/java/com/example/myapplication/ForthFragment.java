@@ -20,7 +20,6 @@ public class ForthFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_info, container, false);
         orderListView = (ListView) view.findViewById(R.id.lv_order);
-
         return view;
     }
     @Override
@@ -43,7 +42,6 @@ public class ForthFragment extends Fragment {
 
                     case 4:   //退出登录
                         Intent intent4=new Intent(getActivity(),LoginActivity.class);
-
                         getActivity().finish();
                         startActivity(intent4);
                         break;

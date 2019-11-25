@@ -4,24 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RobotActivity">
-
+    tools:context=".MainActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <Button
             android:id="@+id/btn_robot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:text="机器人" />
-
         <Button
             android:id="@+id/btn_remark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="大会点评" />
+        <Button
+            android:id="@+id/btn_lottery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="抽奖" />
+        <Button
+            android:id="@+id/btn_sign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="批量注册200个 druid服务器" />
+        <Button
+            android:id="@+id/btn_sign1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="批量注册200个 JDBC服务器" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
