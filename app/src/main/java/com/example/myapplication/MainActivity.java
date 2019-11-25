@@ -121,7 +121,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 }else {
                     //如果不为空，则直接将它显示出来
                     fragmentTransaction.show(fg1);
-
                 }
                 break;
             case 1:

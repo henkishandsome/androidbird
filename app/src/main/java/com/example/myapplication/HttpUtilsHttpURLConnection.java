@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -12,13 +14,68 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 public class HttpUtilsHttpURLConnection {
-    public static String BASE_URL= "http://10.132.212.206:8082/HttpServlet";
+    public static String BASE_URL= "http://223.255.255.173:8080/bird/user";
     /*
      * urlStr:网址
      * parms：提交数据
      * return:网页源码
      * */
-    public static  String getContextByHttp(String urlStr, Map<String,String> parms){
+    public static  String getContextByHttp(String urlStr, JSONObject jsonObject){
+        StringBuilder sb = new StringBuilder();
+        try{
+            URL url = new URL(urlStr);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(5000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("ser-Agent", "Fiddler");
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setInstanceFollowRedirects(true);
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(String.valueOf(jsonObject).getBytes());
+            outputStream.close();
+            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String temp;
+                while((temp = reader.readLine()) != null){
+                    sb.append(temp);
+                }
+                reader.close();
+            }else{
+                return "connection error:" + connection.getResponseCode();
+            }
+
+            connection.disconnect();
+        }catch (Exception e){
+            return e.toString();
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 将map转换成key1=value1&key2=value2的形式
+     * @param map
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    private static String getStringFromOutput(Map<String,String> map) throws UnsupportedEncodingException {
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for(Map.Entry<String,String> entry:map.entrySet()){
+            if(isFirst)
+                isFirst = false;
+            else
+                sb.append("&");
+            sb.append(URLEncoder.encode(entry.getKey(),"UTF-8"));
+            sb.append("=");
+            sb.append(URLEncoder.encode(entry.getValue(),"UTF-8"));
+        }
+        return sb.toString();
+    }
+
+    public static  String getContextByHttp1(String urlStr, Map<String,String> parms){
         StringBuilder sb = new StringBuilder();
         try{
             URL url = new URL(urlStr);
@@ -56,25 +113,40 @@ public class HttpUtilsHttpURLConnection {
         return sb.toString();
     }
 
-    /**
-     * 将map转换成key1=value1&key2=value2的形式
-     * @param map
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-    private static String getStringFromOutput(Map<String,String> map) throws UnsupportedEncodingException {
+    public static  String getContextByHttptest(String urlStr, Map<String,String> parms){
         StringBuilder sb = new StringBuilder();
-        boolean isFirst = true;
+        try{
+            URL url = new URL(urlStr);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(5000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setInstanceFollowRedirects(true);
 
-        for(Map.Entry<String,String> entry:map.entrySet()){
-            if(isFirst)
-                isFirst = false;
-            else
-                sb.append("&");
+            OutputStream outputStream = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
+            writer.write(getStringFromOutput(parms));
 
-            sb.append(URLEncoder.encode(entry.getKey(),"UTF-8"));
-            sb.append("=");
-            sb.append(URLEncoder.encode(entry.getValue(),"UTF-8"));
+            writer.flush();
+            writer.close();
+            outputStream.close();
+
+            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String temp;
+                while((temp = reader.readLine()) != null){
+                    sb.append(temp);
+                }
+                reader.close();
+            }else{
+                return "connection error:" + connection.getResponseCode();
+            }
+
+            connection.disconnect();
+        }catch (Exception e){
+            return e.toString();
         }
         return sb.toString();
     }

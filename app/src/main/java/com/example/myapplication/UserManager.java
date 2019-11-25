@@ -29,7 +29,6 @@ public class UserManager {
         editor.commit();
     }
 
-
     /**
      * 获取用户信息model
      *

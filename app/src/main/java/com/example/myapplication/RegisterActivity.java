@@ -11,8 +11,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,32 +38,26 @@ public class RegisterActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String url = HttpUtilsHttpURLConnection.BASE_URL+"/RegisterServlet";
-                        Map<String, String> params = new HashMap<String, String>();
+                        String url = HttpUtilsHttpURLConnection.BASE_URL+"/gosign.do";
+                        JSONObject jsonObject = new JSONObject();
                         String workId = et_workId.getText().toString();
                         String password = et_password.getText().toString();
                         String name=et_name.getText().toString();
                         String tel=et_tel.getText().toString();
                         String email=et_email.getText().toString();
-
-                        params.put("workId", workId);
-                        params.put("password", password);
-                        params.put("name",name);
-                        params.put("tel",tel);
-                        params.put("email",email);
-
-                        String result = HttpUtilsHttpURLConnection.getContextByHttp(url, params);
-
+                        jsonObject.put("workid", workId);
+                        jsonObject.put("password", password);
+                        jsonObject.put("name",name);
+                        jsonObject.put("tel",tel);
+                        jsonObject.put("email",email);
+                        String result = HttpUtilsHttpURLConnection.getContextByHttp(url, jsonObject);
                         Message msg = new Message();
                         msg.what = 0x12;
                         Bundle data = new Bundle();
                         data.putString("result", result);
                         msg.setData(data);
-
-
                         hander.sendMessage(msg);
                     }
-
                     Handler hander = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
@@ -71,13 +66,13 @@ public class RegisterActivity extends AppCompatActivity {
                                 String key = data.getString("result");//得到json返回的json
                                 //                                   Toast.makeText(LoginActivity.this,key,Toast.LENGTH_LONG).show();
                                 try {
-                                    JSONObject json = new JSONObject(key);
-                                    String result = (String) json.get("result");
-                                    if ("registerYes".equals(result)) {
+                                    JSONObject json = JSONObject.parseObject(key);
+                                    Boolean result = (Boolean) json.get("result");
+                                    if (result) {
                                         Intent intent=new Intent(RegisterActivity.this, LoginActivity.class);
                                         startActivity(intent);
-                                    } else if ("registerNo".equals(result)) {
-                                        Toast.makeText(RegisterActivity.this, "注册失败", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(RegisterActivity.this, (String)json.get("errmsg"), Toast.LENGTH_LONG).show();
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -90,7 +85,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-
     private void init() {
         et_workId = (EditText) findViewById(R.id.et_workId);
         et_password = (EditText) findViewById(R.id.et_password);
@@ -99,4 +93,5 @@ public class RegisterActivity extends AppCompatActivity {
         et_email=(EditText) findViewById(R.id.et_email);
         btn_submit=(Button) findViewById(R.id.btn_submit);
     }
+
 }

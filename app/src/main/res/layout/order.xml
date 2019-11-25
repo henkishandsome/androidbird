@@ -121,7 +121,5 @@
                     android:textColor="#7597B3"/>
             </LinearLayout>
         </RelativeLayout>
-
     </LinearLayout>
-
 </LinearLayout>
